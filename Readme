@@ -13,6 +13,7 @@ Test phase can easily be put in the same loop as the learning phase. Adapt whene
 Abstract_rules is a helper script where things are used in PhD_experiment. There might be redundant information in there (from earlier versions), but cleaning the script is on my to-do list. See in the imports in PhD_experiment for relevant things in the Abstract_rules script. 
 
 Another file are the instructions. This is a powerpoint presentation. Slides can be exported to images and then be used in the experiment itself. 
+Note: the instructions still need to be translated to Dutch as credit participants will be used for the pilot. 
 
 I hope you enjoy going through my (chaotic) code and the results will be fun and insightful. 
 
