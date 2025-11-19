@@ -1,0 +1,19 @@
+##Read me file
+
+"""
+This repository contains all programming I do during my first year PhD. 
+
+My PhD will be regarding curriculum learning. 
+Most important things here will be some modelling and then an experiment to test curriculum learning in humans. 
+
+Models now contains some code which should be run in spyder. Note that no packages apart from numpy are used. This allows for flexibility and reuse of updated layers between models. 
+
+Experiment_code contains code for the experiment itself. Note that the code is not very efficient. This is largely due to the fact that the experiment was coded by progressive insight, changing stuff as I go. 
+Test phase can easily be put in the same loop as the learning phase. Adapt whenever you find time. 
+
+Another file are the instructions. This is a powerpoint presentation. Slides can be exported to images and then be used in the experiment itself. 
+
+I hope you enjoy going through my (chaotic) code and the results will be fun and insightful. 
+
+Happy programming and science! 
+"""
