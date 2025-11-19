@@ -19,6 +19,8 @@ Then we compute the influx in the output units, transform it and get the PE. Aft
 ## General stuff ##
 ###################
 
+import numpy as np
+
 ##Softmax function to change the inputs to decisions 
 def softmax(x):
     """
