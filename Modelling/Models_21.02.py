@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 21 12:57:01 2025
+VERSION OF NOVEMBER 21
 
 @author: wardclaeys
 """
