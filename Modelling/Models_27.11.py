@@ -355,44 +355,8 @@ for choice in range(n_choices):
     data.loc[choice , "ULP_3"] = np.abs(data.loc[choice , "LP_3"])
 
 ##And then save it
-data.to_csv('data/dataframe_1.csv')
-
 #os.chdir("/Users/wardclaeys/OneDrive - UGent/Modelling")
-
-"""
-
-learning progress as the decrease in PE (signed)
-unisgned LP is just the change in PEs (can be both positive or negative)
-
-
-LP  = (x̂_𝑡−1 - x_𝑡−1) – (x̂_𝑡 - x_𝑡)
-    = PE_t-1 - PE_t
-
-PE => PEt = PEt-1 + alpha * PEt
-
-PC = 1/𝑛 ∑_(𝑡^′=𝑡−𝑛)^𝑡▒𝑦_𝑡′ 
-=> PC = (1/n) sommatie van (tijd - n) tot (tijd) y_t
-=> Dus n bepalen en dan het gemiddelde berekenen over die laatste hoeveelheid trials
-
-Novelty; in Poli et al (2022) s(-t) 
-
-"where t indicates the overall number of trials a given character has been observed, 
-and s is a smooth function. Given that we did not have a-priori assumptions on the rate 
-of change in novelty or random search as a function of time, we used additive terms instead 
-of, for instance, a logarithmic or exponential function. "
-
-"""
-
-"""
-##Get the index of the last trial where a certain model was selected (this to use for the LP update)
-if choice != 0 and choice != 1: 
-    if (data.loc[choice , "error_1"] == data.loc[choice - 1 , "error_1"]) and (data.loc[choice - 1 , "error_1"] != data.loc[choice - 2 , "error_1"]): 
-        index_model_1 = choice
-    if (data.loc[choice , "error_2"] == data.loc[choice - 1 , "error_2"]) and (data.loc[choice - 1 , "error_2"] != data.loc[choice - 2 , "error_2"]): 
-        index_model_2 = choice
-    if (data.loc[choice , "error_3"] == data.loc[choice - 1 , "error_3"]) and (data.loc[choice - 1 , "error_3"] != data.loc[choice - 2 , "error_3"]): 
-        index_model_3 = choice
-"""
+data.to_csv('data/dataframe_1.csv')
 
 
 
