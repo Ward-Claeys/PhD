@@ -4,6 +4,8 @@
 Created on Tue Dec  2 15:34:02 2025
 
 @author: wardclaeys
+#Made the input matrix balanced to take care of biases found in the earlier model. Earlier model biased towards one input unit. 
+Also included here is a bias unit in the input matrix. Here it is just a column with 1's and weights are updated in the same way as the weights from the other inputs to the output layer. 
 """
 
 ###########################################################################
@@ -380,30 +382,13 @@ for choice in range(n_choices):
     
     save_variables()
 
-
-"""
-New_MSE = []
-
-for i in range(len(MSE)): 
-    
-    New_MSE.append(np.mean(MSE[ : i + 1]))
-
-MSE[n_choices - 50 : n_choices]
-"""
-
 from matplotlib import pyplot as plt
 
-
 fig , ax = plt.subplots(2 , 2)
-
 ax[0 , 0].plot(MSE_1)
 ax[0 , 1].plot(MSE_2)
 ax[1 , 0].plot(MSE_3)
 #ax[1 , 1].plot(MSE)
-
-len(MSE_1)
-
-#plt.plot(MSE)
 
 def moving_average(a, n=3):
     ret = np.cumsum(a, dtype=float)
@@ -416,61 +401,6 @@ def moving_average(a, n=3):
 ax[1 , 1].plot(moving_average(MSE_1 , n = 10))
 fig.show()
 
-#plt.plot(MSE_1)
-
-#plt.plot(New_MSE)
-
 ##And then save it
 #os.chdir("/Users/wardclaeys/OneDrive - UGent/Modelling")
-
-
 data.to_csv('data/dataframe_1.csv')
-
-#weight_matrix_1
-
-
-"""
-
-learning progress as the decrease in PE (signed)
-unisgned LP is just the change in PEs (can be both positive or negative)
-
-
-LP  = (x̂_𝑡−1 - x_𝑡−1) – (x̂_𝑡 - x_𝑡)
-    = PE_t-1 - PE_t
-
-PE => PEt = PEt-1 + alpha * PEt
-Novelty; in Poli et al (2022) s(-t) 
-
-"where t indicates the overall number of trials a given character has been observed, 
-and s is a smooth function. Given that we did not have a-priori assumptions on the rate 
-of change in novelty or random search as a function of time, we used additive terms instead 
-of, for instance, a logarithmic or exponential function. "
-
-"""
-
-"""
-##Get the index of the last trial where a certain model was selected (this to use for the LP update)
-if choice != 0 and choice != 1: 
-    if (data.loc[choice , "error_1"] == data.loc[choice - 1 , "error_1"]) and (data.loc[choice - 1 , "error_1"] != data.loc[choice - 2 , "error_1"]): 
-        index_model_1 = choice
-    if (data.loc[choice , "error_2"] == data.loc[choice - 1 , "error_2"]) and (data.loc[choice - 1 , "error_2"] != data.loc[choice - 2 , "error_2"]): 
-        index_model_2 = choice
-    if (data.loc[choice , "error_3"] == data.loc[choice - 1 , "error_3"]) and (data.loc[choice - 1 , "error_3"] != data.loc[choice - 2 , "error_3"]): 
-        index_model_3 = choice
-"""
-
-
-"""
-Calculate MSE
-Go like this: 
-    
-    summation of all previous trials and then multiply the target values with the natural log of the decision of the model
-
-"""
-
-#output_matrix_1[4 , : ]
-#softmax(np.matmul(input_matrix[4 , : ] , weight_matrix_1))
-
-
-
-
