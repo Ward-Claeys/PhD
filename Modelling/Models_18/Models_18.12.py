@@ -7,14 +7,15 @@ Created on Tue Dec 16 11:07:41 2025
 """
 
 """
-Here I try to include the trial level selection into the overall models. 
-"""
+Trial selection in here. Trial per trial training of the model, random selection of trials. 
+All models seem to converge just fine (here plotted with both accuracy and loss function). 
 
+Overall, the benefit of pretraining easier trials seems evident given tasks are dependent (i.e., tasks from easier models can be used in later models). 
+Sometimes so extreme that model itself cannot learn task but model with pretraining on easier (i.e., composite task) can. 
+"""
 
 #%%
 import numpy as np
-
-#Oké, itertools is wel echt zeer handig 😃
 from itertools import product
 
 input_options = np.asarray(list(product([0, 1], repeat = 6)))
@@ -572,10 +573,3 @@ ax[1 , 2].set_ylim(0 , 1.1)
 
 plt.suptitle("Model losses and accuracies (red without training earlier models, green with)")
 fig.show()
-
-
-
-
-
-
-
