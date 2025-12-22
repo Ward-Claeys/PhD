@@ -272,23 +272,9 @@ for simulation in range(n_simulations):
             model_3_index += 1 
             
             model_3_prediction = run_model_3(simulation , model_3_index , opt_3)
-        
-
-"""
-accuracy_1 = accuracy_1[accuracy_1 != -9999]
-history_1 = history_1[history_1 != -9999]
-
-accuracy_2 = accuracy_2[accuracy_2 != -9999]
-history_2 = history_2[history_2 != -9999]
-
-accuracy_3 = accuracy_3[accuracy_3 != -9999]
-history_3 = history_3[history_3 != -9999]
-"""
-
 
 mean_1, lower_1, upper_1 = [],[],[]
 mean_2, lower_2, upper_2 = [],[],[]
-
 
 ci = 0.95
 
@@ -315,7 +301,6 @@ for i in range (accuracy_1.shape[1]):
     Lower = MEAN-ci*std
     lower_2.append(Lower)
     upper_2.append(Upper)
-
 
 mean_3, lower_3, upper_3 = [],[],[]
 mean_4, lower_4, upper_4 = [],[],[]
@@ -344,7 +329,6 @@ for i in range (accuracy_2.shape[1]):
     lower_4.append(Lower)
     upper_4.append(Upper)
 
-
 mean_5, lower_5, upper_5 = [],[],[]
 mean_6, lower_6, upper_6 = [],[],[]
 
@@ -372,7 +356,6 @@ for i in range (accuracy_2.shape[1]):
     lower_6.append(Lower)
     upper_6.append(Upper)
 
-
 fig , ax = plt.subplots(2 , 3)
 
 #Plot the loss functions
@@ -381,7 +364,6 @@ ax[0 , 0].fill_between(list(range(len(mean_1))), upper_1, lower_1, color="red", 
 ax[0 , 0].set_title("Model 1")
 ax[0 , 0].set_ylabel("Categorical Cross Entropy")
 ax[0 , 0].set_ylim(-0.2 , 2.5)
-
 ax[1 , 0].plot(mean_2 , "-b" , label = "mean" , color = "green")
 ax[1 , 0].fill_between(list(range(len(mean_2))), upper_2, lower_2, color="green", alpha=0.25)
 ax[1 , 0].set_title("Model 1")
@@ -393,7 +375,6 @@ ax[0 , 1].fill_between(list(range(len(mean_3))), upper_3, lower_3, color="red", 
 ax[0 , 1].set_title("Model 2")
 ax[0 , 1].set_ylabel("Categorical Cross Entropy")
 ax[0 , 1].set_ylim(-0.2 , 2.5)
-
 ax[1 , 1].plot(mean_4 , "-b" , label = "mean" , color = "green")
 ax[1 , 1].fill_between(list(range(len(mean_4))), upper_4, lower_4, color="green", alpha=0.25)
 ax[1 , 1].set_title("Model 2")
@@ -405,7 +386,6 @@ ax[0 , 2].fill_between(list(range(len(mean_5))), upper_5, lower_5, color="red", 
 ax[0 , 2].set_title("Model 3")
 ax[0 , 2].set_ylabel("Categorical Cross Entropy")
 ax[0 , 2].set_ylim(-0.2 , 2.5)
-
 ax[1 , 2].plot(mean_6 , "-b" , label = "mean" , color = "green")
 ax[1 , 2].fill_between(list(range(len(mean_6))), upper_6, lower_6, color="green", alpha=0.25)
 ax[1 , 2].set_title("Model 3")
@@ -413,14 +393,3 @@ ax[1 , 2].set_ylabel("Accuracy")
 ax[1 , 2].set_ylim(-0.1 , 1.5)
 
 fig.show()
-
-
-
-
-
-
-
-
-
-
-
