@@ -1,1 +1,9 @@
 ##Separate folder just for modelling files. I'll try to time-tag them to keep track! 
+
+
+
+iid_sampling_model is a model sampling trials and models iid, meaning no higher level structure guides the decision, but it is always just randomly selected. 
+Models here seem to work just fine. 
+In this code, some plotting happens as well. 6 plots come out; 3 for the loss function and 3 for the accuracy, 1 for each model. 
+
+For any questions, please contact me. 
