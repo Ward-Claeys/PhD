@@ -6,4 +6,7 @@ iid_sampling_model is a model sampling trials and models iid, meaning no higher 
 Models here seem to work just fine. 
 In this code, some plotting happens as well. 6 plots come out; 3 for the loss function and 3 for the accuracy, 1 for each model. 
 
+I also uploaded another file iid_nested_vs_alone for comparing how the models do when they are trained by themselves vs when they are trained with output of previous models. 
+Models still seem to indicate a benefit for using earlier information. 
+
 For any questions, please contact me. 
