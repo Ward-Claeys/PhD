@@ -359,7 +359,7 @@ for simulation in range(n_simulations):
             model_3_prediction = run_model_3(simulation , model_3_index , opt_3 , index_trial)
             
             #Model without them
-            run_model_3_alone(simulation , model_2_index , opt_3_2 , index_trial)
+            run_model_3_alone(simulation , model_3_index , opt_3_2 , index_trial)
 
 #%%Prepare for plotting and actual plotting 
 
