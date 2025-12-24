@@ -327,7 +327,7 @@ for simulation in range(n_simulations):
                 data.loc[choice + n_choices * simulation , "PE_2"] = data.loc[choice + n_choices * simulation - 1 , "PE_2"]
 
 """
-#part of code when you still need to change your working directory. Fix your shit if you still have shit to fix
+#part of code when you still need to change your working directory. 
 
 import os
 os.chdir("/Users/wardclaeys/OneDrive - UGent/Modelling")
