@@ -4,6 +4,13 @@
 Created on Tue Dec 23 15:08:12 2025
 
 @author: wardclaeys
+
+Selection of models is done through 4 parameters: 
+PE: prediction error, here done as the value of the loss function. 
+LP: learning progress; difference between current and previous PE
+ULP: unsigned learning progress; absolute value of the LP
+Novelty: exp(-t) with t += 1 whenever model is chosen more than once in succession
+
 """
 
 #%%Import packages
