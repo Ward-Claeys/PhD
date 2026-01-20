@@ -4,6 +4,13 @@
 Created on Fri Jan 16 09:02:29 2026
 
 @author: wardclaeys
+
+
+Updates in this file: 
+PEs are smoothed now, alpha on 0.5. 
+Here, selection is done based on PEs, novelty and LP (signed). 
+
+For use of the HPC, the plotting functions need to be removed. I'll make a separate folder for plotting once I know what the file looks like. 
 """
 
 #%%Import packages
@@ -97,8 +104,8 @@ def step(model, X, y , opt):
 
 #%%Basics
 
-n_choices   = 100
-n_simulations  = 2
+n_choices   = 20000
+n_simulations  = 7
 
 #%% Model 1
 history_1 = np.zeros((n_simulations , n_choices))
@@ -345,16 +352,9 @@ for simulation in range(n_simulations):
                 novelty_2_exp = np.exp(-novelty_2)
                 novelty_3_exp = np.exp(-novelty_3)
                 
-                
                 model_1_value = np.exp(weight_PE * error_1 + weight_LP * LP_1 + weight_novelty * novelty_1_exp) / (np.exp(weight_PE * error_1 + weight_LP * LP_1 + weight_novelty * novelty_1_exp) + np.exp(weight_PE * error_2 + weight_LP * LP_2 + weight_novelty * novelty_2_exp) + np.exp(weight_PE * error_3 + weight_LP * LP_3 + weight_novelty * novelty_3_exp))
                 model_2_value = np.exp(weight_PE * error_2 + weight_LP * LP_2 + weight_novelty * novelty_2_exp) / (np.exp(weight_PE * error_1 + weight_LP * LP_1 + weight_novelty * novelty_1_exp) + np.exp(weight_PE * error_2 + weight_LP * LP_2 + weight_novelty * novelty_2_exp) + np.exp(weight_PE * error_3 + weight_LP * LP_3 + weight_novelty * novelty_3_exp))
                 model_3_value = np.exp(weight_PE * error_3 + weight_LP * LP_3 + weight_novelty * novelty_3_exp) / (np.exp(weight_PE * error_1 + weight_LP * LP_1 + weight_novelty * novelty_1_exp) + np.exp(weight_PE * error_2 + weight_LP * LP_2 + weight_novelty * novelty_2_exp) + np.exp(weight_PE * error_3 + weight_LP * LP_3 + weight_novelty * novelty_3_exp))
-                
-                """
-                model_1_value = np.exp(weight_PE * error_1 + weight_novelty * novelty_1_exp) / (np.exp(weight_PE * error_1 + weight_novelty * novelty_1_exp) + np.exp(weight_PE * error_2 + weight_novelty * novelty_2_exp) + np.exp(weight_PE * error_3 + weight_novelty * novelty_3_exp))
-                model_2_value = np.exp(weight_PE * error_2 + weight_novelty * novelty_2_exp) / (np.exp(weight_PE * error_1 + weight_novelty * novelty_1_exp) + np.exp(weight_PE * error_2 + weight_novelty * novelty_2_exp) + np.exp(weight_PE * error_3 + weight_novelty * novelty_3_exp))
-                model_3_value = np.exp(weight_PE * error_3 + weight_novelty * novelty_3_exp) / (np.exp(weight_PE * error_1 + weight_novelty * novelty_1_exp) + np.exp(weight_PE * error_2 + weight_novelty * novelty_2_exp) + np.exp(weight_PE * error_3 + weight_novelty * novelty_3_exp))
-                """
                 
                 #Transfer them to softmax values 
                 model_options = [model_1_value , model_2_value , model_3_value]
