@@ -20,6 +20,8 @@ import pandas as pd
 import sys
 import time 
 
+##Double test
+
 #%% Make input matrix (used in all models)
 input_options = np.asarray(list(product([0, 1], repeat = 6)))
 
