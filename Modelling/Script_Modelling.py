@@ -19,6 +19,7 @@ from itertools import product
 import pandas as pd
 import sys
 import time 
+import os
 
 #%% Make input matrix (used in all models)
 input_options = np.asarray(list(product([0, 1], repeat = 6)))
@@ -250,10 +251,23 @@ simulation = 0
 data = pd.DataFrame()
 choice_order = pd.DataFrame()
 
-weight_PE       = -0.5
-weight_LP       = 1
-weight_ULP      = 1
-weight_novelty  = 1
+weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
+
+#weight_PE       = -0.5
+#weight_LP       = 1
+#weight_ULP      = 1
+#weight_novelty  = 1
+
+##Make the directories to write away the data 
+folder = "PE_{0 :  .2f}_LP_{1 : .2f}_Nov{2 : 2f}".format(float(weight_PE) , 
+                                                         float(weight_LP) , 
+                                                         float(weight_novelty))
+
+current_dir = os.getcwd() 
+NEWDIR = os.path.join(current_dir)
+
+if not os.path.exist(NEWDIR): 
+    os.makedirs(NEWDIR)
 
 for simulation in range(n_simulations): 
     
@@ -274,8 +288,6 @@ for simulation in range(n_simulations):
     time_0 = time.clock_gettime(time.CLOCK_REALTIME)
     
     for choice in range(n_choices): 
-        
-        time_1 = time.clock_gettime(time.CLOCK_REALTIME)
         
         data.loc[choice + n_choices * simulation , "simulation"] = simulation
         
@@ -391,8 +403,6 @@ for simulation in range(n_simulations):
                 
                 softmax_choices[choice , 0 + 3 * simulation : 3 + 3 * simulation] = model_options
         
-        time_2 = time.clock_gettime(time.CLOCK_REALTIME)
-        
         #print(time_2 - time_1)
         
         data.loc[choice + n_choices * simulation , "model_choice"] = current_model
@@ -486,10 +496,6 @@ for simulation in range(n_simulations):
             
             model_3_index += 1 
         
-        time_3 = time.clock_gettime(time.CLOCK_REALTIME)
-        
-        #print(time_3 - time_2)
-        
         #data.loc[choice + n_choices * simulation , ["smoothed_PE_1" , "smoothed_PE_2" , "smoothed_PE_3"]] = [error_1 , error_2 , error_3]
     
         if choice != 0: 
@@ -505,30 +511,20 @@ for simulation in range(n_simulations):
             error_3 = data.loc[choice + n_choices * simulation , "PE_3"]
             
         data.loc[choice + n_choices * simulation , ["smoothed_PE_1" , "smoothed_PE_2" , "smoothed_PE_3"]] = [error_1 , error_2 , error_3]
-        
-        time_4 = time.clock_gettime(time.CLOCK_REALTIME)
-        
-        #print(time_4 - time_1)
     
-    time_5 = time.clock_gettime(time.CLOCK_REALTIME)
+    data.to_csv('dataframe_testing.csv')
     
-    print(time_5 - time_0)
+    choice_order.to_csv('order_testing.csv')
     
-    directory_to_write = "data/alpha_" + str(alpha)
+    np.save("model_loss_1" , history_1)
+    np.save("model_loss_2" , history_2)
+    np.save("model_loss_3" , history_3)
     
-    data.to_csv(directory_to_write + '/dataframe_testing.csv')
+    np.save("model_accuracy_1" , accuracy_1)
+    np.save("model_accuracy_2" , accuracy_2)
+    np.save("model_accuracy_3" , accuracy_3)
     
-    choice_order.to_csv(directory_to_write + '/order_testing.csv')
-    
-    np.save(directory_to_write + "/model_loss_1" , history_1)
-    np.save(directory_to_write + "/model_loss_2" , history_2)
-    np.save(directory_to_write + "/model_loss_3" , history_3)
-    
-    np.save(directory_to_write + "/model_accuracy_1" , accuracy_1)
-    np.save(directory_to_write  + "/model_accuracy_2" , accuracy_2)
-    np.save(directory_to_write + "/model_accuracy_3" , accuracy_3)
-    
-    np.save(directory_to_write + "/softmax_choices" , softmax_choices)
+    np.save("softmax_choices" , softmax_choices)
 
 """
 #part of code when you still need to change your working directory. 
