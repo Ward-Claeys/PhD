@@ -251,12 +251,12 @@ simulation = 0
 data = pd.DataFrame()
 choice_order = pd.DataFrame()
 
-#weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
+weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
 
-weight_PE       = -0.5
-weight_LP       = 1
-weight_ULP      = 1
-weight_novelty  = 1
+#weight_PE       = -0.5
+#weight_LP       = 1
+#weight_ULP      = 1
+#weight_novelty  = 1
 
 ##Make the directories to write away the data 
 folder = "PE_{0:.2f}_LP_{1:.2f}_Nov_{2:.2f}".format(float(weight_PE) , 
