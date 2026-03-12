@@ -259,7 +259,7 @@ weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
 #weight_novelty  = 1
 
 ##Make the directories to write away the data 
-folder = "PE_{0 :  .2f}_LP_{1 : .2f}_Nov{2 : 2f}".format(float(weight_PE) , 
+folder = "PE_{0:.2f}_LP_{1:.2f}_Nov_{2:2f}".format(float(weight_PE) , 
                                                          float(weight_LP) , 
                                                          float(weight_novelty))
 
