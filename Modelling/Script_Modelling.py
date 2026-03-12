@@ -251,22 +251,22 @@ simulation = 0
 data = pd.DataFrame()
 choice_order = pd.DataFrame()
 
-weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
+#weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
 
-#weight_PE       = -0.5
-#weight_LP       = 1
-#weight_ULP      = 1
-#weight_novelty  = 1
+weight_PE       = -0.5
+weight_LP       = 1
+weight_ULP      = 1
+weight_novelty  = 1
 
 ##Make the directories to write away the data 
-folder = "PE_{0:.2f}_LP_{1:.2f}_Nov_{2:2f}".format(float(weight_PE) , 
+folder = "PE_{0:.2f}_LP_{1:.2f}_Nov_{2:.2f}".format(float(weight_PE) , 
                                                          float(weight_LP) , 
                                                          float(weight_novelty))
 
 current_dir = os.getcwd() 
-NEWDIR = os.path.join(current_dir)
+NEWDIR = os.path.join(current_dir , folder)
 
-if not os.path.exist(NEWDIR): 
+if not os.path.exists(NEWDIR): 
     os.makedirs(NEWDIR)
 
 for simulation in range(n_simulations): 
@@ -512,19 +512,19 @@ for simulation in range(n_simulations):
             
         data.loc[choice + n_choices * simulation , ["smoothed_PE_1" , "smoothed_PE_2" , "smoothed_PE_3"]] = [error_1 , error_2 , error_3]
     
-    data.to_csv('dataframe_testing.csv')
+    data.to_csv(NEWDIR + '/dataframe_testing.csv')
     
-    choice_order.to_csv('order_testing.csv')
+    choice_order.to_csv(NEWDIR + '/order_testing.csv')
     
-    np.save("model_loss_1" , history_1)
-    np.save("model_loss_2" , history_2)
-    np.save("model_loss_3" , history_3)
+    np.save(NEWDIR + "/model_loss_1" , history_1)
+    np.save(NEWDIR + "/model_loss_2" , history_2)
+    np.save(NEWDIR + "/model_loss_3" , history_3)
     
-    np.save("model_accuracy_1" , accuracy_1)
-    np.save("model_accuracy_2" , accuracy_2)
-    np.save("model_accuracy_3" , accuracy_3)
+    np.save(NEWDIR + "/model_accuracy_1" , accuracy_1)
+    np.save(NEWDIR + "/model_accuracy_2" , accuracy_2)
+    np.save(NEWDIR + "/model_accuracy_3" , accuracy_3)
     
-    np.save("softmax_choices" , softmax_choices)
+    np.save(NEWDIR + "/softmax_choices" , softmax_choices)
 
 """
 #part of code when you still need to change your working directory. 
