@@ -253,6 +253,8 @@ choice_order = pd.DataFrame()
 
 weight_PE , weight_LP , weight_novelty = sys.argv[1 : ]
 
+weight_PE , weight_LP , weight_novelty = np.float64(weight_PE) , np.float64(weight_LP) , np.float64(weight_novelty)
+
 #weight_PE       = -0.5
 #weight_LP       = 1
 #weight_ULP      = 1
@@ -285,8 +287,6 @@ for simulation in range(n_simulations):
     novelty_2 = 0
     novelty_3 = 0
     
-    time_0 = time.clock_gettime(time.CLOCK_REALTIME)
-    
     for choice in range(n_choices): 
         
         data.loc[choice + n_choices * simulation , "simulation"] = simulation
@@ -318,11 +318,16 @@ for simulation in range(n_simulations):
                 #In the previous loop, I locked zero as the PE, but want to get the actual PE in there, so say that on the previous trial, this was the smoothed PE
                 #data.loc[choice + n_choices * simulation - 1 , ["smoothed_PE_1" , "smoothed_PE_2" , "smoothed_PE_3"]] = [error_1 , error_2 , error_3]
                 
-                error_list = [error_1 , error_2 , error_3]
-                error_list = [i * weight_PE for i in error_list]
+                #error_list = [error_1 , error_2 , error_3]
+                error_1 , error_2 , error_3 = error_1 * weight_PE , error_2 * weight_PE , error_3 * weight_PE
+                #error_list = [i * weight_PE for i in error_list]
+                
+                numerator_1 = np.exp(error_1)
+                numerator_2 = np.exp(error_2)
+                numerator_3 = np.exp(error_3)
                 
                 #Transfer them to softmax values 
-                model_options = np.exp(error_list)/np.sum(np.exp(error_list))
+                model_options = [numerator_1/(np.sum([numerator_1 , numerator_2 , numerator_3])) , numerator_2/(np.sum([numerator_1 , numerator_2 , numerator_3])) , (numerator_3/np.sum([numerator_1 , numerator_2 , numerator_3]))]
                 
                 #I do plus one because the np.argmax thingie does a zero-based indexing whilst it's model 1, 2 and 3
                 current_model = np.random.choice(3, p = model_options) + 1 
@@ -352,8 +357,8 @@ for simulation in range(n_simulations):
                 error_3 = data.loc[choice + n_choices * simulation - 1 , "PE_3"]
                 """
                 
-                error_list = [error_1 , error_2 , error_3]
-                error_list = [i * weight_PE for i in error_list]
+                #error_list = [error_1 , error_2 , error_3]
+                #error_list = [i * weight_PE for i in error_list]
                 
                 LP_1 = data.loc[choice + n_choices * simulation - 1 , "LP_1"]
                 LP_2 = data.loc[choice + n_choices * simulation - 1 , "LP_2"]
@@ -361,8 +366,8 @@ for simulation in range(n_simulations):
                 
                 #data.loc[choice + n_choices * simulation , ["LP_1" , "LP_2" , "LP_3"]] = [LP_1 , LP_2 , LP_3]
                 
-                lp_list = [LP_1 , LP_2 , LP_3]
-                lp_list = [i * weight_LP for i in lp_list]
+                #lp_list = [LP_1 , LP_2 , LP_3]
+                #lp_list = [i * weight_LP for i in lp_list]
                 
                 ULP_1 = np.abs(LP_1)
                 ULP_2 = np.abs(LP_2)

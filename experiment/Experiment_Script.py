@@ -80,7 +80,7 @@ my_clock = core.Clock()
 my_clock_2 = core.Clock()
 
 ##Define variables for the hints
-orientations = numpy.arange(start = -85 , stop = 85 , step = 4.5) #40 orientations
+orientations = numpy.arange(start = -88 , stop = 88 , step = 4.5) #40 orientations
 colors = ["blue" , "red"] # 2 colors => do a continuous mapping for this! So from [0 , 0 , 1] to [1 , 0 , 0]
 #If I, for color, vary the RGB value for red and blue from 0 to 1 with steps of 0.1, then it's 5 options for each, so 25 options in total... 
 red_range = numpy.arange(start = 0.1 , stop = 1 , step = 0.2) # 5 options
@@ -172,9 +172,11 @@ third_feature  = numpy.repeat(third_castle, n_trials)
 file_participant_size           = numpy.repeat(participant_size, n_trials)
 file_participant_orientation    = numpy.repeat(participant_orientation, n_trials)
 
-trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , third_feature , file_participant_size , file_participant_orientation , participantNr , participantGender])
+early_exit_column               = numpy.repeat(0 , n_trials)
 
-##Now the file has 13 columns: 
+trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , third_feature , file_participant_size , file_participant_orientation , participantNr , participantGender , early_exit_column])
+
+##Now the file has 18 columns: 
 #0: Trial_number: trial_nr; gets added in the loop
 #1: Chosen castle (can be the same number if the participant does not exit the castle)
 #2: Chosen location 
@@ -191,6 +193,8 @@ trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , 
 #13: Participant size
 #14: Participant orientation
 #15: The participant number
+#16: Participant gender 
+#17: Early exit or not 
 
 ##Get the relevant features per castle in the file to see what is doable and what not. 
 
@@ -690,6 +694,13 @@ while (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (
     print(accuracy_3)
     print(accuracy_3 > 0.7) 
 
+if (total_RT < n_seconds): 
+    early_exit = 1
+else: 
+    early_exit = 0
+
+trials[ : , 17] = early_exit
+
 #################
 ## Test Castle ##
 #################
@@ -1005,5 +1016,5 @@ for trial in range(len(indices)):
 trials = pandas.DataFrame.from_records(trials)
 trials.columns = ["Trial_number", "Chosen_castle", "Chosen_location", "Correct_location", "Accuracy", "Number_of_doors", "RT" , 
                     "Current_orientation" , "Current_color" , "Current_size" , 
-                   "First_feature" , "Second_feature" , "Third_feature" , "Participant_size" , "Participant_orientation" , "Participant_number" , "Participant_gender"]
+                   "First_feature" , "Second_feature" , "Third_feature" , "Participant_size" , "Participant_orientation" , "Participant_number" , "Participant_gender" , "Early_exit"]
 trials.to_csv(path_or_buf = file_name, index = False)

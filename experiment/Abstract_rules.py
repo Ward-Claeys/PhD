@@ -3,7 +3,7 @@ import numpy as np
 import time , pandas
 
 
-orientations = np.arange(start = 0 , stop = 180 , step = 4.5) #40 orientations
+orientations = np.arange(start = -88 , stop = 88 , step = 4.5) #40 orientations
 colors = ["blue" , "red"] # 2 colors => do a continuous mapping for this! So from [0 , 0 , 1] to [1 , 0 , 0]
 #If I, for color, vary the RGB value for red and blue from 0 to 1 with steps of 0.1, then it's 5 options for each, so 25 options in total... 
 red_range = np.arange(start = 0.1 , stop = 1 , step = 0.2) # 5 options
@@ -35,16 +35,16 @@ trials = np.column_stack([orientations_2 , colors_2 , sizes_2])
 ## Get variables ##
 ###################
 
-#So the orientation should be between 30 and 150 AND should not be 90
-participant_orientation = 90
+#So the orientation should be between -20 and 20 AND should not be 0
+participant_orientation = 0
 
-while participant_orientation == 90: 
+while participant_orientation == 0: 
     participant_orientation = np.random.choice(orientations)
     
-    if participant_orientation < 30: 
-        participant_orientation = 90
-    if participant_orientation > 150: 
-        participant_orientation = 90
+    if participant_orientation < -20: 
+        participant_orientation = 0
+    if participant_orientation > 20: 
+        participant_orientation = 0
 
 ##Say 25 possible options for colors; say 0 - 12 we label as blue and 13-25 we label as red
 zero_list = np.repeat(0 , nUnique)
