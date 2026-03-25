@@ -10,11 +10,10 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import os 
 
-
 os.getcwd()
 
 ##Direct yourself to the folder with the data in first
-os.chdir("/Users/wardclaeys/OneDrive - UGent/Modelling/data/Parameter_search")
+os.chdir("/Users/wardclaeys/OneDrive - UGent/Modelling/data/Trouble_Shooting_Parameter_search")
 
 ##Read in the data 
 #I'm still trying to figure out how to do this more efficiently, but can't seem to wrap my head around it...
@@ -70,10 +69,12 @@ simulation_nr = 0
 
 for file in files: 
     ##Move down one for each time 3 files are read (as this is a new condition)
+    #This is because we have 3 models per condition; we do three, then move down
     current_condition = file_nr % 3
     
     file_nr += 1
     
+    #So if current condition is divisible by 3, we did all models for that condition, so we move one down in the array
     simulation_nr += (current_condition == 0)
     
     for simulation in range(file.shape[0]): 
@@ -89,10 +90,8 @@ for file in files:
         mean_simulation[simulation , current_condition , simulation_nr - 1] = np.mean(file[simulation][last_relevant_index - 100 : last_relevant_index])
     
     current_one = mean_simulation[: , current_condition , simulation_nr - 1]
-    no_nans = current_one[~ np.isnan(current_one)]
     
-    mean_accuracy[simulation_nr - 1 , current_condition] = np.mean(no_nans)
-
+    mean_accuracy[simulation_nr - 1 , current_condition] = np.mean(current_one[~ np.isnan(current_one)])
 
 
 
