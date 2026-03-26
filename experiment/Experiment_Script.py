@@ -173,8 +173,9 @@ file_participant_size           = numpy.repeat(participant_size, n_trials)
 file_participant_orientation    = numpy.repeat(participant_orientation, n_trials)
 
 early_exit_column               = numpy.repeat(0 , n_trials)
+time_column                     = numpy.repeat(0 , n_trials)
 
-trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , third_feature , file_participant_size , file_participant_orientation , participantNr , participantGender , early_exit_column])
+trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , third_feature , file_participant_size , file_participant_orientation , participantNr , participantGender , early_exit_column , time_column])
 
 ##Now the file has 18 columns: 
 #0: Trial_number: trial_nr; gets added in the loop
@@ -413,7 +414,7 @@ while (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (
             
             castle_1_accuracy.append(Accuracy)
             
-            accuracy_1 = sum(castle_1_accuracy[-10 : ]) / len(castle_1_accuracy[-10 : ])
+            accuracy_1 = sum(castle_1_accuracy[-30 : ]) / len(castle_1_accuracy[-30 : ])
         
     elif Castle_choice == 2:
         random_indices = numpy.random.randint(0 , tr.shape[0] , 20)
@@ -530,7 +531,7 @@ while (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (
                 time.sleep(2)
             
             castle_2_accuracy.append(Accuracy)
-            accuracy_2 = sum(castle_2_accuracy[-10 : ]) / len(castle_2_accuracy[-10 : ])
+            accuracy_2 = sum(castle_2_accuracy[-30 : ]) / len(castle_2_accuracy[-30 : ])
         
     elif Castle_choice == 3:
         random_indices = numpy.random.randint(0 , tr.shape[0] , 20)
@@ -670,7 +671,7 @@ while (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (
                 time.sleep(2)
             
             castle_3_accuracy.append(Accuracy)
-            accuracy_3 = sum(castle_3_accuracy[-10 : ]) / len(castle_3_accuracy[-10 : ])
+            accuracy_3 = sum(castle_3_accuracy[-30 : ]) / len(castle_3_accuracy[-30 : ])
         
     else: 
         ##Add the castle choice to the file
@@ -700,6 +701,7 @@ else:
     early_exit = 0
 
 trials[ : , 17] = early_exit
+trials[ : , 18] = total_RT
 
 #################
 ## Test Castle ##
@@ -716,10 +718,10 @@ test_text = visual.TextStim(win , text = "This is the test castle, good luck!" ,
 test_castle.draw()
 test_text.draw()
 win.flip()
-time.sleep(2)
+time.sleep(4)
 
 #Get random numbers for selection of the hints (rules should be clear, so it can be different ones as in the learning phase)
-random_indices = numpy.random.randint(0 , tr.shape[0] , 30)
+random_indices = numpy.random.randint(0 , tr.shape[0] , 60)
 
 for trial in range(len(indices)): 
     
@@ -1016,5 +1018,5 @@ for trial in range(len(indices)):
 trials = pandas.DataFrame.from_records(trials)
 trials.columns = ["Trial_number", "Chosen_castle", "Chosen_location", "Correct_location", "Accuracy", "Number_of_doors", "RT" , 
                     "Current_orientation" , "Current_color" , "Current_size" , 
-                   "First_feature" , "Second_feature" , "Third_feature" , "Participant_size" , "Participant_orientation" , "Participant_number" , "Participant_gender" , "Early_exit"]
+                   "First_feature" , "Second_feature" , "Third_feature" , "Participant_size" , "Participant_orientation" , "Participant_number" , "Participant_gender" , "Early_exit" , "Training_time"]
 trials.to_csv(path_or_buf = file_name, index = False)

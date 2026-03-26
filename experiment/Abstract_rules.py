@@ -79,5 +79,5 @@ while (participant_size < 0.22) or (participant_size > 0.38):
     participant_size = np.random.choice(size)
 
 indices = [2 , 4 , 8]
-indices = np.tile(indices , 10)
+indices = np.tile(indices , 20)
 np.random.shuffle(indices)
