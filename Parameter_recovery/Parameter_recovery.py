@@ -51,7 +51,9 @@ initialize_probabilities = [0.5 , 0.25 , 0.125]
 
 data = pd.DataFrame()
 
+data.loc[0 , "Trial_nr"] = 0
 data.loc[0 , "Choice"] = 0
+data.loc[0 , "Reward"] = 0
 data.loc[0 , ["probability_1" , "probability_2" , "probability_3"]] = initialize_probabilities
 data.loc[0 , ["PE_1" , "PE_2" , "PE_3"]] = [0 , 0 , 0]
 data.loc[0 , ["LP_1" , "LP_2" , "LP_3"]] = [0 , 0 , 0]
@@ -65,22 +67,38 @@ weight_PE = -0.5
 weight_LP = 0.5 
 weight_Nov = 0.5
 
+data.loc[ : , ["weight_PE" , "weight_LP" , "weight_Nov"]] = [weight_PE , weight_LP , weight_Nov]
+
 lambd = 0.05
 
-for i in range(100): 
+##Juist of fout erbij doen nog 
+
+for i in range(2000): 
+    
+    data.loc[i , "Trial_nr"] = i
     
     if i == 0: 
         task_choice = np.random.choice(task_options)
+        
+        data.loc[i , ["model_1_probability" , "model_2_probability" , "model_3_probability"]]= [0.33 , 0.33 , 0.33]
+        
     else: 
-        numerator_1 = np.exp(weight_PE * data.loc[i - 1 , "PE_1"] + weight_LP * data.loc[i - 1 , "LP_1"] + weight_Nov * data.loc[i - 1 , "Nov_1"]) 
-        numerator_2 = np.exp(weight_PE * data.loc[i - 1 , "PE_2"] + weight_LP * data.loc[i - 1 , "LP_2"] + weight_Nov * data.loc[i - 1 , "Nov_2"]) 
-        numerator_3 = np.exp(weight_PE * data.loc[i - 1 , "PE_3"] + weight_LP * data.loc[i - 1 , "LP_3"] + weight_Nov * data.loc[i - 1 , "Nov_3"]) 
+        
+        novelty_1_adjusted = np.exp(- novelty_1)
+        novelty_2_adjusted = np.exp(- novelty_2)
+        novelty_3_adjusted = np.exp(- novelty_3)
+        
+        numerator_1 = np.exp(weight_PE * data.loc[i - 1 , "PE_1"] + weight_LP * data.loc[i - 1 , "LP_1"] + weight_Nov * novelty_1_adjusted) 
+        numerator_2 = np.exp(weight_PE * data.loc[i - 1 , "PE_2"] + weight_LP * data.loc[i - 1 , "LP_2"] + weight_Nov * novelty_2_adjusted) 
+        numerator_3 = np.exp(weight_PE * data.loc[i - 1 , "PE_3"] + weight_LP * data.loc[i - 1 , "LP_3"] + weight_Nov * novelty_3_adjusted) 
     
         model_1 = numerator_1 / np.sum([numerator_1 , numerator_2 , numerator_3])
         model_2 = numerator_2 / np.sum([numerator_1 , numerator_2 , numerator_3])
         model_3 = numerator_3 / np.sum([numerator_1 , numerator_2 , numerator_3])
         
         task_choice = np.random.choice(task_options , p = [model_1 , model_2 , model_3])
+        
+        data.loc[i , ["model_1_probability" , "model_2_probability" , "model_3_probability"]]= [model_1 , model_2 , model_3]
         
     task_probabilities = list(data.loc[i , ["probability_1" , "probability_2" , "probability_3"]])
     
@@ -167,9 +185,15 @@ for i in range(100):
         novelty_1 = 0
         novelty_2 = 0
     
-    data.loc[i + 1 , ["probability_1" , "probability_2" , "probability_3"]] = task_probabilities
+    if i != 1999: 
+        data.loc[i + 1 , ["probability_1" , "probability_2" , "probability_3"]] = task_probabilities
     data.loc[i , ["PE_1" , "PE_2" , "PE_3"]] = [PE_1 , PE_2 , PE_3]
     data.loc[i , ["LP_1" , "LP_2" , "LP_3"]] = [LP_1 , LP_2 , LP_3]
     data.loc[i , ["Nov_1" , "Nov_2" , "Nov_3"]] = [novelty_1 , novelty_2 , novelty_3]
-    
+    data.loc[i , "Reward"] = correct 
+
+data.to_csv("Check_this_file.csv")
+
+
+
 
