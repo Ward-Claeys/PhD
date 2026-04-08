@@ -24,7 +24,9 @@ def softmax(values = np.array([0.5, 0.5 , 0.5]) , PEs = np.array([0.5 , 0.5 , 0.
     numerator_2 = np.exp(values[0] * PEs[1] + values[1] * LPs[1] + values[2] * Novs[1])
     numerator_3 = np.exp(values[0] * PEs[2] + values[1] * LPs[2] + values[2] * Novs[2])
     
-    response_probabilities = [numerator_1 / np.sum([numerator_1 , numerator_2 , numerator_3]) , numerator_2 / np.sum([numerator_1 , numerator_2 , numerator_3]) , numerator_3 / np.sum([numerator_1 , numerator_2 , numerator_3])]
+    denom = np.sum([numerator_1 , numerator_2 , numerator_3])
+    
+    response_probabilities = [numerator_1 / denom, numerator_2 / denom, numerator_3 / denom]
     
     #response_probabilities = np.exp(values[0][0] * PEs + values[0][1] * LPs + values[0][2] * Novs) / np.sum(np.exp(values[0][0] * PEs + values[0][1] * LPs + values[0][2] * Novs))
     
