@@ -133,10 +133,10 @@ for i in range(parameter_values.shape[0]):
                     #Get the information in the file; the "Generating" variables are the variables used to generate the dataset 
                     #The "Used" variables are the ones used to get the LL 
                     estimated_data.loc[recovery + simulation * parameter_values.shape[0] + i * n_simulations , ["Generating_PE", "Generating_LP" , "Generating_Nov"]] = [weight_PE , weight_LP , weight_Nov]
-                    estimated_data.loc[recovery + simulation * parameter_values.shape[0] + i * n_simulations , "generating_model"] = i 
+                    estimated_data.loc[recovery + simulation * parameter_values.shape[0] + i * n_simulations , "generating_model"] = i + 1
                     
                     estimated_data.loc[recovery + simulation * parameter_values.shape[0] + i * n_simulations , ["Used_PE", "Used_LP" , "Used_Nov"]] = parameter_values[recovery , : ]
-                    estimated_data.loc[recovery + simulation * parameter_values.shape[0] + i * n_simulations , "used_model"] = recovery 
+                    estimated_data.loc[recovery + simulation * parameter_values.shape[0] + i * n_simulations , "used_model"] = recovery + 1
                     
                     LL = likelihood(parameter_values[recovery , : ] , df)
                     
