@@ -20,15 +20,11 @@ warnings.filterwarnings("ignore")
 
 os.chdir("/Users/wardclaeys/Documents/Github/PhD/Parameter_recovery")
 
-def softmax(values = np.array([0.5]) , PEs = np.array([0.5 , 0.5 , 0.5]) , LPs = np.array([0.5 , 0.5 , 0.5])  , Novs = np.array([0.5 , 0.5 , 0.5])):
+def softmax(values = np.array([0.5 , 0.5 , 0.5]) , PEs = np.array([0.5 , 0.5 , 0.5]) , LPs = np.array([0.5 , 0.5 , 0.5])  , Novs = np.array([0.5 , 0.5 , 0.5])):
     
-    nov_1 = np.exp(- Novs[0])
-    nov_2 = np.exp(- Novs[1])
-    nov_3 = np.exp(- Novs[2])
-    
-    numerator_1 = np.exp(values[0] * PEs[0] + values[1] * LPs[0] + values[2] * nov_1)
-    numerator_2 = np.exp(values[0] * PEs[1] + values[1] * LPs[1] + values[2] * nov_2)
-    numerator_3 = np.exp(values[0] * PEs[2] + values[1] * LPs[2] + values[2] * nov_3)
+    numerator_1 = np.exp(values[0] * PEs[0] + values[1] * LPs[0] + values[2] * Novs[0])
+    numerator_2 = np.exp(values[0] * PEs[1] + values[1] * LPs[1] + values[2] * Novs[1])
+    numerator_3 = np.exp(values[0] * PEs[2] + values[1] * LPs[2] + values[2] * Novs[2])
     
     denom = np.sum([numerator_1 , numerator_2 , numerator_3])
     
@@ -56,7 +52,7 @@ def likelihood(parameter_set, data):
         if trial == 0: 
             PEs = np.array([0 , 0 , 0])
             LPs = np.array([0 , 0 , 0])
-            Novs = np.array([0 , 0 , 0])
+            Novs = np.array([99 , 99 , 99])
         else: 
             ##Wacht, maar ik gebruik normaal gezien de vorige trial om te schatten eh, jij ooeennnnnn 
             PEs = np.array([df.loc[trial - 1 , "PE_1"] , df.loc[trial - 1 , "PE_2"] , df.loc[trial - 1 , "PE_3"]])
@@ -90,7 +86,7 @@ for i in range(parameter_values.shape[0]):
     
     weight_PE , weight_LP , weight_Nov = parameter_values[i , : ]
     
-    generate_dataset(n = 500 , weight_PE = weight_PE , weight_LP = weight_LP, weight_Nov = weight_Nov)
+    generate_dataset(n = 300 , weight_PE = weight_PE , weight_LP = weight_LP, weight_Nov = weight_Nov)
     
     if __name__ == '__main__':
         #Extract path to data folder

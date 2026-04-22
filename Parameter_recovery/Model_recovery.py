@@ -86,12 +86,24 @@ np.random.shuffle(Nov_values)
 
 #parameter_values = np.column_stack([PE_values , LP_values , Nov_values])
 
+"""
 parameter_values = np.array([[1 , 0 , 0 ] , 
                             [0 , 1 , 0] , 
                             [0 , 0 , 1] , 
                             [1 , 1 , 0] , 
                             [0 , 1 , 1] , 
                             [1 , 1 , 1]])
+"""
+
+values_PE = np.random.uniform(-1 , 0 , 100) 
+values_LP = np.random.uniform(0 , 1 , 100) 
+values_Nov = np.random.uniform(0 , 1 , 100)
+
+np.random.shuffle(values_PE)
+np.random.shuffle(values_LP)
+np.random.shuffle(values_Nov)
+
+parameter_values = np.column_stack([values_PE , values_LP , values_Nov])
 
 #Define number of simulations I want to do; here this is equivalent to the number of model recoveries I want
 n_simulations = 100

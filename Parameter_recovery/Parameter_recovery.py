@@ -6,12 +6,6 @@ Created on Thu Mar 26 08:31:36 2026
 @author: wardclaeys
 """
 
-"""
-Pr(castle i) = exp(γQ(𝑠𝑡 ,𝑎𝑡))
-                ∑ exp(γQ(𝑠𝑡 ,𝑎𝑡))
-
-Q(𝑠𝑡 , 𝑎𝑡) <- Q(𝑠𝑡 , 𝑎𝑡) + α(𝑟𝑡+1 - Q(𝑠𝑡 , 𝑎𝑡))
-"""
 
 """
 Dus effe recap van alles: 
@@ -63,7 +57,8 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
     task_options = [1 , 2 , 3]
     
     PE_1 , PE_2 , PE_3 = 0 , 0 , 0
-    novelty_1 , novelty_2 , novelty_3 = 0 , 0 , 0
+    LP_1 , LP_2 , LP_3 = 0 , 0 , 0
+    novelty_1 , novelty_2 , novelty_3 = 99 , 99 , 99
     
 #    weight_PE = -0.5
 #    weight_LP = 0.5 
@@ -73,7 +68,9 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
     
     lambd = 0.05
     
-    ##Juist of fout erbij doen nog 
+    rolling_average_1 = []
+    rolling_average_2 = []
+    rolling_average_3 = []
     
     for i in range(n): 
         
@@ -86,13 +83,9 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             
         else: 
             
-            novelty_1_adjusted = np.exp(- novelty_1)
-            novelty_2_adjusted = np.exp(- novelty_2)
-            novelty_3_adjusted = np.exp(- novelty_3)
-            
-            numerator_1 = np.exp(weight_PE * data.loc[i - 1 , "PE_1"] + weight_LP * data.loc[i - 1 , "LP_1"] + weight_Nov * novelty_1_adjusted) 
-            numerator_2 = np.exp(weight_PE * data.loc[i - 1 , "PE_2"] + weight_LP * data.loc[i - 1 , "LP_2"] + weight_Nov * novelty_2_adjusted) 
-            numerator_3 = np.exp(weight_PE * data.loc[i - 1 , "PE_3"] + weight_LP * data.loc[i - 1 , "LP_3"] + weight_Nov * novelty_3_adjusted) 
+            numerator_1 = np.exp(weight_PE * PE_1 + weight_LP * LP_1 + weight_Nov * novelty_1) 
+            numerator_2 = np.exp(weight_PE * PE_2 + weight_LP * LP_2 + weight_Nov * novelty_2) 
+            numerator_3 = np.exp(weight_PE * PE_3 + weight_LP * LP_3 + weight_Nov * novelty_3) 
         
             model_1 = numerator_1 / np.sum([numerator_1 , numerator_2 , numerator_3])
             model_2 = numerator_2 / np.sum([numerator_1 , numerator_2 , numerator_3])
@@ -110,7 +103,10 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             prob_correct = data.loc[i , "probability_1"]
             correct = np.random.choice([1 , 0] , p = [prob_correct , 1 - prob_correct])
             
-            PE_1 = correct - data.loc[i , "probability_1"]
+            rolling_average_1.append(correct)
+            PE_1 = 1 - np.mean(rolling_average_1[-10 : ])
+            
+            #PE_1 = correct - data.loc[i , "probability_1"]
             
             if i == 0: 
                 PE_2 , PE_3 = 0 , 0
@@ -129,15 +125,18 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             task_probabilities[1] = data.loc[i , "probability_2"]
             task_probabilities[2] = data.loc[i , "probability_3"]
             
-            novelty_1 += 1
-            novelty_2 = 0
-            novelty_3 = 0
+            novelty_1 = 0
+            novelty_2 += 1
+            novelty_3 += 1
     
         elif task_choice == 2: 
             prob_correct = data.loc[i , "probability_2"]
             correct = np.random.choice([1 , 0] , p = [prob_correct , 1 - prob_correct])
             
-            PE_2 = correct - data.loc[i , "probability_2"]
+            rolling_average_2.append(correct)
+            PE_2 = 1 - np.mean(rolling_average_2[-10 : ])
+            
+            #PE_2 = correct - data.loc[i , "probability_2"]
             
             if i == 0: 
                 PE_1 , PE_3 = 0 , 0
@@ -156,15 +155,18 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             task_probabilities[0] = data.loc[i , "probability_1"]
             task_probabilities[2] = data.loc[i , "probability_3"]
             
-            novelty_2 += 1
-            novelty_1 = 0
-            novelty_3 = 0
+            novelty_2 = 0
+            novelty_1 += 1 
+            novelty_3 += 1
             
         else: 
             prob_correct = data.loc[i , "probability_3"]
             correct = np.random.choice([1 , 0] , p = [prob_correct , 1 - prob_correct])
             
-            PE_3 = correct - data.loc[i , "probability_3"]
+            rolling_average_3.append(correct)
+            PE_3 = 1 - np.mean(rolling_average_3[-10 : ])
+            
+            #PE_3 = correct - data.loc[i , "probability_3"]
             
             if i == 0: 
                 PE_1 , PE_2 = 0 , 0
@@ -183,12 +185,13 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             task_probabilities[0] = data.loc[i , "probability_1"]
             task_probabilities[1] = data.loc[i , "probability_2"]
             
-            novelty_3 += 1
-            novelty_1 = 0
-            novelty_2 = 0
+            novelty_3 = 0 
+            novelty_1 += 1
+            novelty_2 += 1 
         
         if i != (n - 1): 
             data.loc[i + 1 , ["probability_1" , "probability_2" , "probability_3"]] = task_probabilities
+            
         data.loc[i , ["PE_1" , "PE_2" , "PE_3"]] = [PE_1 , PE_2 , PE_3]
         data.loc[i , ["LP_1" , "LP_2" , "LP_3"]] = [LP_1 , LP_2 , LP_3]
         data.loc[i , ["Nov_1" , "Nov_2" , "Nov_3"]] = [novelty_1 , novelty_2 , novelty_3]
@@ -197,7 +200,3 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
     data.to_csv("Check_this_file.csv")
     
     return 
-
-
-
-
