@@ -60,13 +60,9 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
     LP_1 , LP_2 , LP_3 = 0 , 0 , 0
     novelty_1 , novelty_2 , novelty_3 = 99 , 99 , 99
     
-#    weight_PE = -0.5
-#    weight_LP = 0.5 
-#    weight_Nov = 0.5
-    
     data.loc[ : , ["weight_PE" , "weight_LP" , "weight_Nov"]] = [weight_PE , weight_LP , weight_Nov]
     
-    lambd = 0.05
+    lambd = 0.03
     
     rolling_average_1 = []
     rolling_average_2 = []
@@ -83,9 +79,14 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             
         else: 
             
-            numerator_1 = np.exp(weight_PE * PE_1 + weight_LP * LP_1 + weight_Nov * novelty_1) 
-            numerator_2 = np.exp(weight_PE * PE_2 + weight_LP * LP_2 + weight_Nov * novelty_2) 
-            numerator_3 = np.exp(weight_PE * PE_3 + weight_LP * LP_3 + weight_Nov * novelty_3) 
+            #Max seems to go to about 10 or something, so adjust so it's about between 0 and 1
+            adjusted_novelty_1 = novelty_1 / 10
+            adjusted_novelty_2 = novelty_2 / 10 
+            adjusted_novelty_3 = novelty_3 / 10 
+            
+            numerator_1 = np.exp(weight_PE * PE_1 + weight_LP * LP_1 + weight_Nov * adjusted_novelty_1) 
+            numerator_2 = np.exp(weight_PE * PE_2 + weight_LP * LP_2 + weight_Nov * adjusted_novelty_2) 
+            numerator_3 = np.exp(weight_PE * PE_3 + weight_LP * LP_3 + weight_Nov * adjusted_novelty_3) 
         
             model_1 = numerator_1 / np.sum([numerator_1 , numerator_2 , numerator_3])
             model_2 = numerator_2 / np.sum([numerator_1 , numerator_2 , numerator_3])
@@ -194,9 +195,19 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             
         data.loc[i , ["PE_1" , "PE_2" , "PE_3"]] = [PE_1 , PE_2 , PE_3]
         data.loc[i , ["LP_1" , "LP_2" , "LP_3"]] = [LP_1 , LP_2 , LP_3]
-        data.loc[i , ["Nov_1" , "Nov_2" , "Nov_3"]] = [novelty_1 , novelty_2 , novelty_3]
+        data.loc[i , ["Nov_1" , "Nov_2" , "Nov_3"]] = [novelty_1  , novelty_2  , novelty_3 ]
         data.loc[i , "Reward"] = correct 
+        
+        #Reset probabilities back to chance level every 50 trials 
+        if i % 50 == 0: 
+            data.loc[i + 1 , ["probability_1" , "probability_2" , "probability_3"]] = initialize_probabilities
     
     data.to_csv("Check_this_file.csv")
     
     return 
+
+
+
+
+
+

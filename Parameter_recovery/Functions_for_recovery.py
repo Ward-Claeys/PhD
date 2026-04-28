@@ -22,9 +22,14 @@ os.chdir("/Users/wardclaeys/Documents/Github/PhD/Parameter_recovery")
 
 def softmax(values = np.array([0.5 , 0.5 , 0.5]) , PEs = np.array([0.5 , 0.5 , 0.5]) , LPs = np.array([0.5 , 0.5 , 0.5])  , Novs = np.array([0.5 , 0.5 , 0.5])):
     
-    numerator_1 = np.exp(values[0] * PEs[0] + values[1] * LPs[0] + values[2] * Novs[0])
-    numerator_2 = np.exp(values[0] * PEs[1] + values[1] * LPs[1] + values[2] * Novs[1])
-    numerator_3 = np.exp(values[0] * PEs[2] + values[1] * LPs[2] + values[2] * Novs[2])
+    #Max seems to go to about 10 or something, so adjust so it's about between 0 and 1
+    adjusted_novelty_1 = Novs[0] / 10
+    adjusted_novelty_2 = Novs[1] / 10
+    adjusted_novelty_3 = Novs[2] / 10
+    
+    numerator_1 = np.exp(values[0] * PEs[0] + values[1] * LPs[0] + values[2] * adjusted_novelty_1)
+    numerator_2 = np.exp(values[0] * PEs[1] + values[1] * LPs[1] + values[2] * adjusted_novelty_2)
+    numerator_3 = np.exp(values[0] * PEs[2] + values[1] * LPs[2] + values[2] * adjusted_novelty_3)
     
     denom = np.sum([numerator_1 , numerator_2 , numerator_3])
     
@@ -86,7 +91,7 @@ for i in range(parameter_values.shape[0]):
     
     weight_PE , weight_LP , weight_Nov = parameter_values[i , : ]
     
-    generate_dataset(n = 300 , weight_PE = weight_PE , weight_LP = weight_LP, weight_Nov = weight_Nov)
+    generate_dataset(n = 350 , weight_PE = weight_PE , weight_LP = weight_LP, weight_Nov = weight_Nov)
     
     if __name__ == '__main__':
         #Extract path to data folder
@@ -97,7 +102,7 @@ for i in range(parameter_values.shape[0]):
         filelist = os.listdir(directory)
         filtered_filelist = [x for x in filelist if x[-3::]=="csv"]
         filtered_filelist = [x for x in filtered_filelist if x != "Fitting_results.csv"]
-        filtered_filelist = [x for x in filtered_filelist if x[-13::] != "Simulated.csv"]
+        filtered_filelist = [x for x in filtered_filelist if x != "Model_recovery_results.csv"]
     
         #Go to that directory
         os.chdir(directory)
