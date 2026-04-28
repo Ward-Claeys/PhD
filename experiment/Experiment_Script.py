@@ -230,6 +230,7 @@ trial_nr = 0
 my_clock_2.reset()
 
 total_RT = 0
+meta_trial_nr = 0
 accuracy_1 , accuracy_2 , accuracy_3 = 0 , 0 , 0
 
 castle_1_count , castle_2_count , castle_3_count= 0 , 0 , 0
@@ -237,7 +238,9 @@ castle_1_count , castle_2_count , castle_3_count= 0 , 0 , 0
 castle_1_accuracy , castle_2_accuracy , castle_3_accuracy = [] , [] , []
 
 #Stay in the loop for 45 minutes, except when the participant get above 70% on all castles and has done at least 10 trials per castle
-while (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (accuracy_2 < 0.7 or castle_2_count < 10) or (accuracy_3 < 0.7 or castle_3_count < 10)):
+while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (accuracy_2 < 0.7 or castle_2_count < 10) or (accuracy_3 < 0.7 or castle_3_count < 10)): 
+    
+    meta_trial_nr += 1
     
     position = -9999
     ##Wait for participant to pick a castle + they cannot click next to a castle
@@ -709,7 +712,7 @@ trials[ : , 18] = total_RT
 
 ##After 45 minutes or after the participant reached an accuracy of 70% in each of the castles, we go to the test castle
 
-#30 walls, 10 from each castle as a test, we randomly shuffle the different castles/difficulties 
+#60 walls, 20 from each castle as a test, we randomly shuffle the different castles/difficulties 
 #Shuffled order is in indices
 
 test_castle = visual.ImageStim(win , image = castle_directory + castle_images[3] , size = (0.3 , 0.5) , pos = (0 , 0))
