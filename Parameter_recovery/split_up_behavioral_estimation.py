@@ -126,16 +126,6 @@ def add_variables(data):
     
     return df 
 
-"""
-def extract_meta_trials_indices(data): 
-    #Get the indices of the relevant trials => i.e., the meta trials
-    #Note that the trial number start from 1 and we index from 0 in python
-    indices = df.query("Accuracy == 0")["Trial_number"]
-    indices = indices[ : -1]
-    
-    return indices    
-"""
-
 # Likelihood function for empirical data
 #It only gets calculated for trials where participants do a meta-decision here, not for all trials 
 def likelihood(parameter_set, data):
@@ -215,18 +205,17 @@ if __name__ == '__main__':
     for file in filtered_filelist:
         idx +=1
         
-        print(file)
         #Get subject id 
         sub = file[2 : -4]
         
         #Minimize negative loglikelihood
         #optimization_output = optimize.minimize(fun = likelihood , x0 = [start_params, df]) #, options = {'maxfev':10000, 'xatol':0.00001, 'return_all':0})
         
+        ##Add the relevant variables to the data file and then save it. Here I overwrite the file as I don't really need it afterwards. 
         data = add_variables(file)
         data.to_csv("Fitting_results.csv")
         
-        #indices = extract_meta_trials_indices(df)
-        
+        #Minimize negative loglikelihood
         optimization_output = optimize.minimize(fun = likelihood , x0 = start_params , args = "Fitting_results.csv" , options = {'maxfev':10000, 'xatol':0.00001, 'return_all':0})
         
         #Get minimum log likelihood and parameter estimations

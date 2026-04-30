@@ -238,9 +238,10 @@ castle_1_count , castle_2_count , castle_3_count= 0 , 0 , 0
 castle_1_accuracy , castle_2_accuracy , castle_3_accuracy = [] , [] , []
 
 #Stay in the loop for 45 minutes, except when the participant get above 70% on all castles and has done at least 10 trials per castle
-while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 10) or (accuracy_2 < 0.7 or castle_2_count < 10) or (accuracy_3 < 0.7 or castle_3_count < 10)): 
+while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 30) or (accuracy_2 < 0.7 or castle_2_count < 30) or (accuracy_3 < 0.7 or castle_3_count < 30))): 
     
     meta_trial_nr += 1
+    print(meta_trial_nr)
     
     position = -9999
     ##Wait for participant to pick a castle + they cannot click next to a castle
@@ -308,7 +309,7 @@ while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or ca
     if Castle_choice == 1:
         random_indices = numpy.random.randint(0 , tr.shape[0] , 20)
         ##Want to loop through this until participant gives the wrong response or untill they reach the treasure room
-        while not incorrect and trial < 20:
+        while not incorrect and trial < 10:
             castle_1_count += 1
             ##Add the castle choice to the file
             trials[trial_nr , 1] = Castle_choice
@@ -410,7 +411,7 @@ while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or ca
             
             trial += 1
             
-            if (trial == 20) and (Accuracy == 1): 
+            if (trial == 10) and (Accuracy == 1): 
                 Treasure.draw()
                 win.flip()
                 time.sleep(2)
@@ -421,7 +422,7 @@ while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or ca
         
     elif Castle_choice == 2:
         random_indices = numpy.random.randint(0 , tr.shape[0] , 20)
-        while not incorrect and trial < 20:
+        while not incorrect and trial < 10:
             
             castle_2_count += 1
             
@@ -528,7 +529,7 @@ while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or ca
             
             trial += 1
             
-            if (trial == 20) and (Accuracy == 1): 
+            if (trial == 10) and (Accuracy == 1): 
                 Treasure.draw()
                 win.flip()
                 time.sleep(2)
@@ -538,7 +539,7 @@ while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or ca
         
     elif Castle_choice == 3:
         random_indices = numpy.random.randint(0 , tr.shape[0] , 20)
-        while not incorrect and trial < 20:
+        while not incorrect and trial < 10:
             
             castle_3_count += 1
             
@@ -668,7 +669,7 @@ while meta_trial_nr < 100 or (total_RT < n_seconds) and ((accuracy_1 < 0.7 or ca
             
             trial += 1
             
-            if (trial == 20) and (Accuracy == 1): 
+            if (trial == 10) and (Accuracy == 1): 
                 Treasure.draw()
                 win.flip()
                 time.sleep(2)
