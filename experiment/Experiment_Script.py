@@ -216,7 +216,7 @@ display_instructions(file = instructions_directory + "/Slide7.png")
 display_instructions(file = instructions_directory + "/Slide8.png")
 display_instructions(file = instructions_directory + "/Slide9.png")
 display_instructions(file = instructions_directory + "/Slide10.png")
-#display_instructions(file = instructions_directory + "/Slide11.png")
+display_instructions(file = instructions_directory + "/Slide11.png")
 #display_instructions(file = instructions_directory + "/Slide12.png")
 #display_instructions(file = instructions_directory + "/Slide13.png")
 
@@ -241,7 +241,6 @@ castle_1_accuracy , castle_2_accuracy , castle_3_accuracy = [] , [] , []
 while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 30) or (accuracy_2 < 0.7 or castle_2_count < 30) or (accuracy_3 < 0.7 or castle_3_count < 30))): 
     
     meta_trial_nr += 1
-    print(meta_trial_nr)
     
     position = -9999
     ##Wait for participant to pick a castle + they cannot click next to a castle
