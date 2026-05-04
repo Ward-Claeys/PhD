@@ -40,13 +40,13 @@ new_directory   = my_directory + "/Data/Files"
 if not os.path.isdir(new_directory):
     os.mkdir(new_directory)
 
-info = {"First Name" : "Ward" , "Participant Number" : 4 , "Gender" : ["male" , "female" , "other"]}
+info = {"First Name" : "Ward" , "Participant Number" : 4 , "Gender" : ["male" , "female" , "other"] , "Age" : 18}
 
 ##Here I check whether or not the file I'm about to make exists. I do this with my participant number because that's the only thing in my file name
 already_exists = True
 while already_exists:
     ##I present my dialogue box
-    myDlg = gui.DlgFromDict(dictionary = info , title = "Castles experiment" , order = ("First Name" , "Participant Number" , "Gender"))
+    myDlg = gui.DlgFromDict(dictionary = info , title = "Castles experiment" , order = ("First Name" , "Participant Number" , "Gender" , "Age"))
     ##And create my file
     participant = str(info["Participant Number"])
     file_name = new_directory + "/pp" + str(info["Participant Number"])
@@ -61,6 +61,7 @@ while already_exists:
         myDlg2.show()
 
 gender = str(info["Gender"])
+age = str(info["Age"])
 
 # instructions function
 def display_instructions(file = "instructions.png"):
@@ -103,7 +104,7 @@ positions_2 = [(-0.6 , 0) , (0 , 0) , (0.6 , 0)] #, (0.75 , 0)]
 ##Some basic features of the design
 n_choices = 40 #This is the amount of time the participant gets to chose a castle => Not a variable in the experiment, I only use n_seconds!! 
 n_trials = 4000 #280 #This is a large number in order for me to be sure that the file I generate will be large enough for all trials. 
-n_seconds = 2700 #2700 #This is the amount of time participants can explore for maximum. They can move on earlier if they get 70% correct on each castle
+n_seconds = 2700 #2700 #2700 #This is the amount of time participants can explore for maximum. They can move on earlier if they get 70% correct on each castle
 
 ##Some visuals to use later on
 Recties         = visual.Rect(win , size = (0.4 , 0.6) , lineWidth = 20, lineColor = "black" , fillColor = None)
@@ -149,6 +150,7 @@ empty    = numpy.empty((n_trials,9))
 empty.fill(-9999)
 participantNr   = numpy.repeat(participant, n_trials)
 participantGender   = numpy.repeat(gender, n_trials)
+participantAge   = numpy.repeat(age, n_trials)
 
 ########################
 ## Randomize features ##
@@ -174,8 +176,9 @@ file_participant_orientation    = numpy.repeat(participant_orientation, n_trials
 
 early_exit_column               = numpy.repeat(0 , n_trials)
 time_column                     = numpy.repeat(0 , n_trials)
+meta_trial                      = numpy.repeat(0 , n_trials)
 
-trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , third_feature , file_participant_size , file_participant_orientation , participantNr , participantGender , early_exit_column , time_column])
+trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , third_feature , file_participant_size , file_participant_orientation , participantNr , participantGender , early_exit_column , time_column , meta_trial , participantAge])
 
 ##Now the file has 18 columns: 
 #0: Trial_number: trial_nr; gets added in the loop
@@ -196,6 +199,9 @@ trials = numpy.column_stack([trialnr , empty , first_feature , second_feature , 
 #15: The participant number
 #16: Participant gender 
 #17: Early exit or not 
+#18: Time on task 
+#19: Meta trial
+#20: Participant age 
 
 ##Get the relevant features per castle in the file to see what is doable and what not. 
 
@@ -238,9 +244,10 @@ castle_1_count , castle_2_count , castle_3_count= 0 , 0 , 0
 castle_1_accuracy , castle_2_accuracy , castle_3_accuracy = [] , [] , []
 
 #Stay in the loop for 45 minutes, except when the participant get above 70% on all castles and has done at least 10 trials per castle
-while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or castle_1_count < 30) or (accuracy_2 < 0.7 or castle_2_count < 30) or (accuracy_3 < 0.7 or castle_3_count < 30))): 
+while (meta_trial_nr < 100) or (((accuracy_1 < 0.7 or castle_1_count < 30) or (accuracy_2 < 0.7 or castle_2_count < 30) or (accuracy_3 < 0.7 or castle_3_count < 30))): 
     
     meta_trial_nr += 1
+    print(meta_trial_nr)
     
     position = -9999
     ##Wait for participant to pick a castle + they cannot click next to a castle
@@ -313,6 +320,9 @@ while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or
             ##Add the castle choice to the file
             trials[trial_nr , 1] = Castle_choice
             trials[trial_nr , 5] = 2
+            
+            if trial == 0: 
+                trials[trial_nr , 19] = 1
             
             trial_nr += 1
             
@@ -427,6 +437,9 @@ while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or
             
             trials[trial_nr , 1] = Castle_choice
             trials[trial_nr , 5] = 4
+            
+            if trial == 0: 
+                trials[trial_nr , 19] = 1
             
             trial_nr += 1
             mouseResponses = [0,0,0]
@@ -544,6 +557,9 @@ while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or
             
             trials[trial_nr , 1] = Castle_choice
             trials[trial_nr , 5] = 8
+            
+            if trial == 0: 
+                trials[trial_nr , 19] = 1
             
             mouseResponses = [0,0,0]
             my_clock.reset()
@@ -697,6 +713,9 @@ while (meta_trial_nr < 100) or ((total_RT < n_seconds) and ((accuracy_1 < 0.7 or
     print(accuracy_2 > 0.7)
     print(accuracy_3)
     print(accuracy_3 > 0.7) 
+    
+    if total_RT > n_seconds: 
+        break
 
 if (total_RT < n_seconds): 
     early_exit = 1
@@ -1021,5 +1040,5 @@ for trial in range(len(indices)):
 trials = pandas.DataFrame.from_records(trials)
 trials.columns = ["Trial_number", "Chosen_castle", "Chosen_location", "Correct_location", "Accuracy", "Number_of_doors", "RT" , 
                     "Current_orientation" , "Current_color" , "Current_size" , 
-                   "First_feature" , "Second_feature" , "Third_feature" , "Participant_size" , "Participant_orientation" , "Participant_number" , "Participant_gender" , "Early_exit" , "Training_time"]
+                   "First_feature" , "Second_feature" , "Third_feature" , "Participant_size" , "Participant_orientation" , "Participant_number" , "Participant_gender" , "Early_exit" , "Training_time" , "Meta_trial" , "Participant_age"]
 trials.to_csv(path_or_buf = file_name, index = False)
