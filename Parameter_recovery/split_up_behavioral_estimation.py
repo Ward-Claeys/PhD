@@ -81,6 +81,7 @@ def add_variables(data):
                 
                 #PE_1 = int(df.loc[trial , "Accuracy"]) - probability_1 
                 
+                #Nothing changes with the chance tree for this castle 
                 PE_1 = np.abs(df.loc[trial , "Correct_location"] - df.loc[trial , "Chosen_location"])
                 
                 novelty_1 = 0
@@ -96,7 +97,20 @@ def add_variables(data):
                 
                 #PE_2 = int(df.loc[trial , "Accuracy"]) - probability_2
                 
-                PE_2 = np.abs(df.loc[trial , "Correct_location"] - df.loc[trial , "Chosen_location"])
+                #Here, it does change though
+                #PE_2 = np.abs(df.loc[trial , "Correct_location"] - df.loc[trial , "Chosen_location"])
+                
+                PE_2 = 0 
+                
+                #If they got the wrong location, then it's an error. Go into the statement and then decide how bad the error is 
+                if (df.loc[trial , "Correct_location"] != df.loc[trial , "Chosen_location"]):
+                    #If it's a different side, then it's an error on the first "branch" 
+                    #If it's not the same side, the statement is true and add 1 to the error term 
+                    PE_2 += 1 * (1 * (df.loc[trial , "Correct_location"] < 2) != 1 * (df.loc[trial , "Chosen_location"] < 2))
+                    
+                    ##Then on the second branch it's an even-odd thing. 
+                    #If same side, both even or both odd and then it's correct on the second branch. If not, add one for the error 
+                    PE_2 += 1 * ((df.loc[trial , "Correct_location"] % 2) != (df.loc[trial , "Chosen_location"] % 2))
                 
                 novelty_2 = 0
                 novelty_1 += 1 
@@ -111,7 +125,27 @@ def add_variables(data):
                 
                 #PE_3 = int(df.loc[trial , "Accuracy"]) - probability_3
                 
-                PE_3 = np.abs(df.loc[trial , "Correct_location"] - df.loc[trial , "Chosen_location"])
+                #PE_3 = np.abs(df.loc[trial , "Correct_location"] - df.loc[trial , "Chosen_location"])
+                
+                
+                PE_3 = 0 
+                
+                #If they got the wrong location, then it's an error. Go into the statement and then decide how bad the error is 
+                if (df.loc[trial , "Correct_location"] != df.loc[trial , "Chosen_location"]):
+                    #If it's a different side, then it's an error on the first "branch" 
+                    #If it's not the same side, the statement is true and add 1 to the error term 
+                    PE_3 += 1 * (1 * (df.loc[trial , "Correct_location"] < 4) != 1 * (df.loc[trial , "Chosen_location"] < 4))
+                    
+                    #For the second branch; choosing the same side means going to either 0 , 1 , 4 , 5 OR going to 2 , 3 , 6 , 7 
+                    #So if both chosen and correct are in set_1, then it's the same decision, so not an error on the second branch 
+                    #If one is in the set and the other one not, then it's an error on the second branch 
+                    set_1 = [2 , 3 , 6 , 7]
+                    
+                    PE_3 += 1 * ((df.loc[trial , "Correct_location"] in set_1) != (df.loc[trial , "Chosen_location"] in set_1))
+                    
+                    ##Then on the third branch it's an even-odd thing. 
+                    #If same side, both even or both odd and then it's correct on the second branch. If not, add one for the error 
+                    PE_3 += 1 * ((df.loc[trial , "Correct_location"] % 2) != (df.loc[trial , "Chosen_location"] % 2))
                 
                 novelty_3 = 0  
                 novelty_2 += 1 
@@ -187,7 +221,8 @@ estimated_data = pd.DataFrame(columns=column_list)
 if __name__ == '__main__':
     #Extract path to data folder
     
-    directory = "/Users/wardclaeys/Documents/Github/PhD/Parameter_recovery/Pilot_17th_March"
+    #directory = "/Users/wardclaeys/Documents/Github/PhD/Parameter_recovery/Pilot_17th_March"
+    directory = "/Users/wardclaeys/Documents/Github/PhD/experiment/Data_PhD"
 
     #Get a list of files in the folder and filter on csv files that are not previous fitting results
     filelist = os.listdir(directory)
