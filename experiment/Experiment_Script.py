@@ -40,7 +40,7 @@ new_directory   = my_directory + "/Data/Files"
 if not os.path.isdir(new_directory):
     os.mkdir(new_directory)
 
-info = {"First Name" : "Ward" , "Participant Number" : 4 , "Gender" : ["male" , "female" , "other"] , "Age" : 18}
+info = {"First Name" : "Ward" , "Participant Number" : 4 , "Gender" : ["male" , "female" , "other"] , "Age" : 18 , "Language" : ["English" , "Nederlands"]}
 
 ##Here I check whether or not the file I'm about to make exists. I do this with my participant number because that's the only thing in my file name
 already_exists = True
@@ -60,8 +60,11 @@ while already_exists:
         myDlg2.addText("This number was already used. Please ask the experimenter to help you to enter a unique number.")
         myDlg2.show()
 
+#Get demographics to put in file 
 gender = str(info["Gender"])
 age = str(info["Age"])
+#Get language of participant to decide how to instruct them; i.e., Dutch or English  
+en = 1 * (str(info["Language"]) == "English")
 
 # instructions function
 def display_instructions(file = "instructions.png"):
@@ -94,7 +97,11 @@ size = numpy.arange(start = 0.1, stop = 0.5 , step = 0.04) # 10 sizes
 ##Read in the images of the castles
 castle_directory = my_directory + "/Castle_images"
 castle_images = ["/Castle_1.png" , "/Castle_2.png" , "/Castle_3.png" , "/Castle_4.png"]
-instructions_directory = my_directory + "/Instructions_nl"
+
+if en == 1: 
+    instructions_directory = my_directory + "/Instructions"
+else: 
+    instructions_directory = my_directory + "/Instructions_nl"
 
 ##Define positions of the castles (first one put a little lower for visual reasons)
 ##Position 2 is for the squares around the castles. Easier for participants to see if they clicked correctly (squares change color whan participants hover over it)
