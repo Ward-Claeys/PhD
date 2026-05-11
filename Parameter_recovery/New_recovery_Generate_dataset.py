@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 26 08:31:36 2026
+Created on Mon May 11 15:26:56 2026
 
 @author: wardclaeys
 """
@@ -31,6 +31,18 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
     initialize_probabilities = [0.5 , 0.25 , 0.125]
     
     data = pd.DataFrame()
+    
+    data.loc[0: n , "First_feature"]     = np.random.choice([0 , 1] , size = n)
+    data.loc[0: n , "Second_feature"]    = np.random.choice([0 , 1] , size = n)
+    data.loc[0: n , "Third_feature"]     = np.random.choice([0 , 1] , size = n)
+    
+    #For first feature let's just go with 0 is location 0 and 1 is location 1, then we literally just need to copy paste the column #efficiency 
+    data.loc[0: n , "Correct_response_1"]     = data.loc[0: n , "First_feature"]  
+    #If first feature is 0, then left 2 (location 0 and 1), if 1, then right 2 (location 2 and 3) so 2 * value first feature 
+    #Then add second feature so that we get 0-1-2-3
+    data.loc[0: n , "Correct_response_2"]     = 2 * data.loc[0: n , "First_feature"]  + data.loc[0: n , "Second_feature"]
+    #And then same kindo of principle for the third one 
+    data.loc[0: n , "Correct_response_3"]     = 4 * data.loc[0: n , "First_feature"]  + 2 * data.loc[0: n , "Second_feature"] + data.loc[0: n , "Third_feature"]
     
     data.loc[0 , "Trial_nr"] = 0
     data.loc[0 , "Choice"] = 0
@@ -86,11 +98,15 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
         data.loc[i , "Choice"] = task_choice
         
         if task_choice == 1: 
-            prob_correct = data.loc[i , "probability_1"]
-            correct = np.random.choice([1 , 0] , p = [prob_correct , 1 - prob_correct])
+            prob_correct = [data.loc[i , "probability_1"]]
             
-            rolling_average_1.append(correct)
-            PE_1 = 1 - np.mean(rolling_average_1[-10 : ])
+            #0 and 1 are here locations, not accuracies (as in the previous recovery)
+            response = np.random.choice([0 , 1] , p = [prob_correct[0] , (1 - prob_correct[0])])
+            
+            PE_1 = np.abs(data.loc[i , "Correct_response_1"] - response)
+            
+            #rolling_average_1.append(correct)
+            #PE_1 = 1 - np.mean(rolling_average_1[-10 : ])
             
             #PE_1 = correct - data.loc[i , "probability_1"]
             
@@ -114,13 +130,29 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             novelty_1 = 0
             novelty_2 += 1
             novelty_3 += 1
+            
+            #just for funsies add a variable to say wheter or not the response is correct (you never know we'll need it)
+            correct = 1 * (response == data.loc[i , "Correct_response_1"])
     
         elif task_choice == 2: 
-            prob_correct = data.loc[i , "probability_2"]
-            correct = np.random.choice([1 , 0] , p = [prob_correct , 1 - prob_correct])
+            prob_correct = [data.loc[i , "probability_2"]]
             
-            rolling_average_2.append(correct)
-            PE_2 = 1 - np.mean(rolling_average_2[-10 : ])
+            other_probs = list(np.repeat(((1 - prob_correct[0]) / 3) , 3)) 
+            prob_correct.extend(other_probs)
+            
+            response = np.random.choice([0 , 1 , 2 , 3] , p = prob_correct)
+            
+            PE_2 = 0 
+            
+            #If they got the wrong location, then it's an error. Go into the statement and then decide how bad the error is 
+            if (data.loc[i , "Correct_response_2"] != response):
+                #If it's a different side, then it's an error on the first "branch" 
+                #If it's not the same side, the statement is true and add 1 to the error term 
+                PE_2 += 1 * (1 * (data.loc[i , "Correct_response_2"] < 2) != 1 * (response < 2))
+                
+                ##Then on the second branch it's an even-odd thing. 
+                #If same side, both even or both odd and then it's correct on the second branch. If not, add one for the error 
+                PE_2 += 1 * ((data.loc[i , "Correct_response_2"] % 2) != (response % 2))
             
             #PE_2 = correct - data.loc[i , "probability_2"]
             
@@ -145,12 +177,35 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             novelty_1 += 1 
             novelty_3 += 1
             
-        else: 
-            prob_correct = data.loc[i , "probability_3"]
-            correct = np.random.choice([1 , 0] , p = [prob_correct , 1 - prob_correct])
+            #just for funsies add a variable to say wheter or not the response is correct (you never know we'll need it)
+            correct = 1 * (response == data.loc[i , "Correct_response_2"])
             
-            rolling_average_3.append(correct)
-            PE_3 = 1 - np.mean(rolling_average_3[-10 : ])
+        else: 
+            prob_correct = [data.loc[i , "probability_3"]]
+            
+            other_probs = list(np.repeat(((1 - prob_correct[0]) / 7) , 7)) 
+            prob_correct.extend(other_probs)
+            
+            response = np.random.choice([0 , 1 , 2 , 3 , 4 , 5 , 6 , 7] , p = prob_correct)
+            
+            PE_3 = 0 
+            
+            #If they got the wrong location, then it's an error. Go into the statement and then decide how bad the error is 
+            if (data.loc[i , "Correct_response_3"] != response):
+                #If it's a different side, then it's an error on the first "branch" 
+                #If it's not the same side, the statement is true and add 1 to the error term 
+                PE_3 += 1 * (1 * (data.loc[i , "Correct_response_3"] < 4) != 1 * (response < 4))
+                
+                #For the second branch; choosing the same side means going to either 0 , 1 , 4 , 5 OR going to 2 , 3 , 6 , 7 
+                #So if both chosen and correct are in set_1, then it's the same decision, so not an error on the second branch 
+                #If one is in the set and the other one not, then it's an error on the second branch 
+                set_1 = [2 , 3 , 6 , 7]
+                
+                PE_3 += 1 * ((data.loc[i , "Correct_response_3"] in set_1) != (response in set_1))
+                
+                ##Then on the third branch it's an even-odd thing. 
+                #If same side, both even or both odd and then it's correct on the second branch. If not, add one for the error 
+                PE_3 += 1 * ((data.loc[i , "Correct_response_3"] % 2) != (response % 2)) 
             
             #PE_3 = correct - data.loc[i , "probability_3"]
             
@@ -174,6 +229,9 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
             novelty_3 = 0 
             novelty_1 += 1
             novelty_2 += 1 
+            
+            #just for funsies add a variable to say wheter or not the response is correct (you never know we'll need it)
+            correct = 1 * (response == data.loc[i , "Correct_response_3"])
         
         if i != (n - 1): 
             data.loc[i + 1 , ["probability_1" , "probability_2" , "probability_3"]] = task_probabilities
@@ -190,9 +248,3 @@ def generate_dataset(n = 200 , weight_PE = -0.5 , weight_LP = 0.5 , weight_Nov =
     data.to_csv("Check_this_file.csv")
     
     return 
-
-
-
-
-
-
