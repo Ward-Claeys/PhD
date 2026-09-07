@@ -16,13 +16,30 @@ def sigmoid(x, slope , shift):
 
 def stay_leave_decision(boundaries , current_task , RAs):
     
+    #Add some noise for the fixed boundaries, to not get a likelihood of inf immediately 
+    #Noise needs to be positive and below one because we'll use them as probabilities 
+    
+    ##To check; maybe you go in minus because the RAs start at 0!! 
+    
+    valid = 0
+    while valid == 0: 
+        noise = np.random.normal(loc = 0.5 , scale = 0.2)
+        
+        if 0 < noise < 1: 
+            valid = 1
+    
     if current_task == 1: 
         #Get the normalized value for the decision
-        probability = sigmoid(RAs[0] , 1 , boundaries[0])
+        
+        #probability = sigmoid(RAs[0] , 1 , boundaries[0])
+        
         #If the prob is high, then that's a sign to move on to a more difficult task, if not, we stay 
         #The first prob is the decrement one (which is not possible, since it's the easiest task), the second is the stay one and the third is the increment one 
-        stay_leave = [0 , 1 - probability , probability]
-            
+        
+        #stay_leave = [0 , 1 - probability , probability]
+        prob = RAs[0] - noise 
+        stay_leave = [0 , 1 - prob , prob]
+        
     elif current_task == 2: 
         #Get the normalized value for the decision
         #Now we have a probability to increment  
@@ -31,19 +48,25 @@ def stay_leave_decision(boundaries , current_task , RAs):
 
         #Then we also calculate the prob to stay or decrement
         decrement_stay = sigmoid(RAs[1] , 1 , boundaries[2])
-        
+    
         decrement_stay = [1 - decrement_stay , decrement_stay]
-        decrement_stay = [x * increment for x in decrement_stay]
+        decrement_stay = [x * (1 - increment) for x in decrement_stay]
         
         #So now we have a list with 3 probabilities; a prob to decrement, one to stay and one to increment 
         stay_leave = [decrement_stay[0] , decrement_stay[1] , increment]
     
     else: 
         #Get the normalized value for the decision
-        probability = sigmoid(RAs[2] , 1 , boundaries[3])
+        
+        #probability = sigmoid(RAs[2] , 1 , boundaries[3])
+        
         #If the prob is high, then that's a sign to stay as this is the last task
         #The first prob is the decrement one and the second is the stay one (here reversed because a high one is a stay, cuz you're at the boundary), the last is increment, but zero since not possible as it's the most difficult task 
-        stay_leave = [1 - probability , probability , 0]
+        
+        #stay_leave = [1 - probability , probability , 0]
+        
+        prob = RAs[2] - noise
+        stay_leave = [0 , 1 - prob , prob]
      
     return stay_leave
 
@@ -218,7 +241,7 @@ def likelihood(parameter_set, data):
                 response = int(np.sign(df.loc[trial , "Chosen_castle"] - df.loc[trial - 1 , "Chosen_castle"]) + 1)
                 
                 # then select the probability of the actual response given the parameter set
-                current_loglikelihood = loglikelihoods[response]
+                current_loglikelihood = loglikelihoods[response]#Check if positice!! 
     
                 # Add L(parameter set|current response) to the total log likelihood
                 summed_logL = summed_logL + current_loglikelihood
@@ -240,9 +263,11 @@ if __name__ == '__main__':
     filtered_filelist = [x for x in filelist if x[-3::]=="csv"]
     filtered_filelist = [x for x in filtered_filelist if x != "Fitting_results_participants.csv"]
     filtered_filelist = [x for x in filtered_filelist if x != "Fitting_results_participants_Testing.csv"]
+    filtered_filelist = [x for x in filtered_filelist if x != "Fitting_results_participants_Testing_2.csv"]
     filtered_filelist = [x for x in filtered_filelist if x != "TEST_Fitting_results_participants.csv"]
     filtered_filelist = [x for x in filtered_filelist if x[-19::] != "Fitting_results.csv"]
     filtered_filelist = [x for x in filtered_filelist if x[0:6] != "File_pp"]
+    filtered_filelist = [x for x in filtered_filelist if x != "Fitting_results_participants_Testing_Fixed_Boundaries.csv"]
 
     #Go to that directory
     os.chdir(directory)
@@ -269,7 +294,7 @@ if __name__ == '__main__':
         n = data.shape[0]
         
         #Minimize negative loglikelihood
-        optimization_output = optimize.minimize(fun = likelihood , x0 = start_params , args = "Fitting_results.csv" , options = {'maxfev':10000, 'xatol':0.00001, 'return_all':0})
+        optimization_output = optimize.minimize(fun = likelihood , x0 = start_params , args = "Fitting_results.csv" , options = {'maxfev':10000, 'xatol':0.00001, 'return_all':0} , method = "Nelder-Mead")# , verbose = 1)
         
         #Get minimum log likelihood and parameter estimations
         LL = optimization_output['fun']
@@ -293,5 +318,8 @@ if __name__ == '__main__':
         print("Simulated data")
 
     #Write results of parameter fitting
-estimated_data.to_csv("Fitting_results_participants_Testing.csv", columns = column_list, float_format ='%.3f')
+estimated_data.to_csv("Fitting_results_participants_Testing_Fixed_Boundaries.csv", columns = column_list, float_format ='%.3f')
 print("End of fitting procedure")
+
+
+
